@@ -27,4 +27,9 @@ class ContentUriRequestBody(
             sink.writeAll(source)
         }
     }
+    
+    override fun contentLength(): Long {
+		return contentResolver.openFileDescriptor(uri, "r")
+			?.use { it.statSize } ?: super.contentLength()
+	}
 }
