@@ -29,7 +29,7 @@ class ContentUriRequestBody(
     }
     
     override fun contentLength(): Long {
-		return contentResolver.openFileDescriptor(uri, "r")
-			?.use { it.statSize } ?: super.contentLength()
-	}
+	return contentResolver.openFileDescriptor(uri, "r")
+		?.use { it.statSize } ?: super.contentLength()
+    }
 }
