@@ -1,6 +1,7 @@
 package de.cketti.demo.okhttp
 
 import android.content.ContentResolver
+import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -25,6 +26,19 @@ class ContentUriRequestBody(
 
         inputStream.source().use { source ->
             sink.writeAll(source)
+        }
+    }
+
+    override fun contentLength(): Long {
+        val fileDescriptor = kotlin.runCatching {
+            contentResolver.openAssetFileDescriptor(contentUri, "r")
+        }.getOrNull() ?: return super.contentLength()
+
+        val size = fileDescriptor.use { it.length }
+        return if (size == AssetFileDescriptor.UNKNOWN_LENGTH) {
+            super.contentLength()
+        } else {
+            size
         }
     }
 }
